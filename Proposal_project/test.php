@@ -19,7 +19,7 @@ if (isset($_POST['Login'])) {
             if ($user['role'] == 'admin') {
                 header("Location: admin_dashboard.php");
             } elseif ($user['role'] == 'parent') {
-                header("Location: parent_dashboard.php");
+                header("Location: ../parent/parent_dashboard.php");
             }
         } else {
             $error_message = "Invalid password";
