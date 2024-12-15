@@ -2,43 +2,6 @@
 include('../db_connect.php');
 session_start();
 
-// Include PHPMailer files and namespaces
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
-require 'C:\xampp\htdocs\Proposal_project\PHPMailer-6.9.3\PHPMailer-6.9.3\src/Exception.php'; 
-require 'C:\xampp\htdocs\Proposal_project\PHPMailer-6.9.3\PHPMailer-6.9.3\src/PHPMailer.php';
-require 'C:\xampp\htdocs\Proposal_project\PHPMailer-6.9.3\PHPMailer-6.9.3\src/SMTP.php';
-
-function sendEmailNotification($email, $vaccine_name, $v_date, $timing, &$messages) {
-    $mail = new PHPMailer(true);
-
-    try {
-        // Server settings
-        $mail->isSMTP();
-        $mail->Host = 'smtp.gmail.com';
-        $mail->SMTPAuth = true;
-        $mail->Username = 'shreejanpkota009@gmail.com';
-        $mail->Password = 'haohfpwexwnifqfc'; 
-        $mail->SMTPSecure = 'tls';
-        $mail->Port = 587;
-
-        // Recipients
-        $mail->setFrom('shreejanpkota009@gmail.com', 'Child Vaccination System');
-        $mail->addAddress($email);
-
-        // Content
-        $mail->isHTML(true);
-        $mail->Subject = "Vaccine Reminder: $vaccine_name";
-        $mail->Body = "Dear Parent, <br><br>This is a reminder for your child's upcoming vaccine: $vaccine_name scheduled on $v_date at $timing.<br><br>Best Regards,<br>Child Vaccination System";
-
-        $mail->send();
-        $messages[] = "Email sent successfully to $email";
-    } catch (Exception $e) {
-        $messages[] = "Failed to send email to $email. Mailer Error: {$mail->ErrorInfo}";
-    }
-}
-
 $messages = []; 
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -51,7 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $c_height = $_POST['c_height'];
     $c_vaccine = $_POST['c_vaccine'];
     $p_username = $_POST['p_username'];
-    $p_email = $_POST['p_email']; // New email field
+    $p_email = $_POST['p_email'];
 
     $duplicate_check = "SELECT * FROM child WHERE c_name = ? AND c_birth = ? AND c_weight = ?";
     $stmt = $conn->prepare($duplicate_check);
@@ -60,54 +23,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $result = $stmt->get_result();
 
     if ($result->num_rows > 0) {
-        $messages[] = "Cannot insert the record since we found duplicate entry";
+        $messages[] = "Cannot insert the record since we found duplicate entry.";
     } else {
-        $insert_query = "INSERT INTO child (c_name, c_gender, c_city, c_birth, c_age, c_weight, c_height, c_vaccine, p_username)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        // Insert the child's data with status 'false' (pending approval)
+        $insert_query = "INSERT INTO child (c_name, c_gender, c_city, c_birth, c_age, c_weight, c_height, c_vaccine, p_username, p_email, status)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'false')";
         $stmt = $conn->prepare($insert_query);
-        $stmt->bind_param("ssssiiiss", $c_name, $c_gender, $c_city, $c_birth, $c_age, $c_weight, $c_height, $c_vaccine, $p_username);
+        $stmt->bind_param("ssssiiisss", $c_name, $c_gender, $c_city, $c_birth, $c_age, $c_weight, $c_height, $c_vaccine, $p_username, $p_email);
 
         if ($stmt->execute()) {
-            $messages[] = "New record created successfully";
-
-            // Generate vaccine schedule
-            $birth_date = new DateTime($c_birth);
-            $vaccine_schedule = [
-                ['name' => 'Hepatitis B', 'interval' => '0 days'],
-                ['name' => 'BCG', 'interval' => '0 days'],
-                ['name' => 'Polio', 'interval' => '2 months'],
-                ['name' => 'DTP', 'interval' => '4 months'],
-                // Add more vaccines as needed
-            ];
-
-            foreach ($vaccine_schedule as $vaccine) {
-                $v_date = clone $birth_date;
-                $v_date->modify($vaccine['interval']);
-                $status = 'false';
-                $v_name = $vaccine['name'];
-                $formatted_v_date = $v_date->format('Y-m-d');
-                $timing = '09:00:00';
-                
-                $insert_vaccine_query = "INSERT INTO vaccine_dates (c_name, p_username, name, v_date, timing, status) VALUES (?, ?, ?, ?, ?, ?)";
-                $stmt_vaccine = $conn->prepare($insert_vaccine_query);
-                $stmt_vaccine->bind_param("ssssss", $c_name, $p_username, $v_name, $formatted_v_date, $timing, $status);
-
-                if ($stmt_vaccine->execute()) {
-                    // Send email notification using the provided email
-                    sendEmailNotification($p_email, $v_name, $formatted_v_date, $timing, $messages);
-                } else {
-                    $messages[] = "Error inserting vaccine date: " . $stmt_vaccine->error;
-                }
-                $stmt_vaccine->close(); // Close each statement after use
-            }
+            $messages[] = "Child information submitted for approval.";
         } else {
-            $messages[] = "Error inserting child record: " . $stmt->error;
+            $messages[] = "Error submitting child information: " . $stmt->error;
         }
-        $stmt->close(); // Ensure this is only called once
+        $stmt->close();
     }
 }
-$conn->close();
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -145,7 +79,8 @@ $conn->close();
         input[type="text"],
         input[type="date"],
         input[type="number"],
-        input[type="email"] { /* Added email input style */
+        input[type="email"],
+        select {
             width: 100%;
             padding: 8px;
             margin-bottom: 10px;
@@ -167,20 +102,6 @@ $conn->close();
             background-color: #218838;
             transform: scale(1.04);
         }
-        .back-button {
-            display: block;
-            margin-top: 20px;
-            padding: 10px;
-            background-color: #007bff;
-            color: #ffffff;
-            text-align: center;
-            text-decoration: none;
-            border-radius: 4px;
-            transition: background-color 0.3s ease;
-        }
-        .back-button:hover {
-            background-color: #0056b3;
-        }
         .notification {
             margin-top: 20px;
             padding: 10px;
@@ -189,33 +110,59 @@ $conn->close();
             color: #2e7d32;
             text-align: center;
         }
+        .back-button {
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
     <div class="form-container">
         <h2>Add Child</h2>
+        <?php
+        if (!empty($messages)) {
+            foreach ($messages as $message) {
+                echo "<div class='notification'>$message</div>";
+            }
+        }
+        ?>
         <form method="post" action="add_child.php">
             <label for="c_name">Name:</label>
-            <input type="text" id="c_name" name="c_name" required><br>
-            
+            <input type="text" id="c_name" name="c_name" required>
+
             <label for="c_gender">Gender:</label>
-            <input type="text" id="c_gender" name="c_gender" required><br>
-            
+            <select id="c_gender" name="c_gender" required>
+                <option value="">Select gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+            </select>
+
             <label for="c_city">City:</label>
-            <input type="text" id="c_city" name="c_city" required><br>
-            
+            <input type="text" id="c_city" name="c_city" required>
+
             <label for="c_birth">Birth Date:</label>
-            <input type="date" id="c_birth" name="c_birth" required><br>
-            
+            <input type="date" id="c_birth" name="c_birth" required>
+
             <label for="c_age">Age:</label>
-            <input type="number" id="c_age" name="c_age" required><br>
-            
+            <input type="number" id="c_age" name="c_age" required>
+
             <label for="c_weight">Weight in kgs:</label>
-            <input type="number" id="c_weight" name="c_weight" required><br>
-            
+            <input type="number" id="c_weight" name="c_weight" required>
+
             <label for="c_height">Height in cms:</label>
-            <input type="number" id="c_height" name="c_height" required><br>
-            
+            <input type="number" id="c_height" name="c_height" required>
+
             <label for="c_vaccine">Vaccine:</label>
             <select id="c_vaccine" name="c_vaccine" required>
                 <option value="">Select a vaccine</option>
@@ -223,23 +170,17 @@ $conn->close();
                 <option value="BCG">BCG</option>
                 <option value="Polio">Polio</option>
                 <option value="DTP">DTP</option>
-                <!-- Add more options as needed -->
-            </select><br>
-            
+            </select>
+
             <label for="p_username">Parent Username:</label>
-            <input type="text" id="p_username" name="p_username" required><br>
-            
-            <label for="p_email">Parent Email:</label> <!-- New email field -->
-            <input type="email" id="p_email" name="p_email" required><br>
-            
+            <input type="text" id="p_username" name="p_username" required>
+
+            <label for="p_email">Parent Email:</label>
+            <input type="email" id="p_email" name="p_email" required>
+
             <input type="submit" value="Add Child">
         </form>
-        <a href="parent_dashboard.php" class="back-button">Back to Dashboard</a>
-        <?php if (!empty($messages)): ?>
-            <div class="notification">
-                <?php echo implode('<br>', array_unique($messages)); ?>
-            </div>
-        <?php endif; ?>
+        <a href="parent_dashboard.php" class="back-button">Back to Parent Dashboard</a>
     </div>
 </body>
 </html>

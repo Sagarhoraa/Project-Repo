@@ -2,17 +2,28 @@
 include('../db_connect.php');
 session_start();
 
-// Fetch records from the database
-$sql = "SELECT * FROM child";
-$result = $conn->query($sql);
+// // Check if the user is logged in
+// if (!isset($_SESSION['username'])) {
+//     echo "You must be logged in to view this page.";
+//     exit;
+// }
 
+// Fetch child details from the database
+$p_username = $_SESSION['username'];
+
+$sql = "SELECT * FROM child WHERE p_username = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("s", $p_username);
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Child Records</title>
+    <title>View Child Record</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -22,35 +33,75 @@ $result = $conn->query($sql);
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
         }
         .container {
             background-color: #ffffff;
             border-radius: 10px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             padding: 30px;
-            width: 80%;
+            width: 90%;
             max-width: 800px;
+            overflow-x: auto;
+        }
+        .fetching-message {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 20px;
+            font-weight: bold;
+            font-size: 1.2em;
         }
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
         }
         table, th, td {
-            border: 1px solid #ccc;
+            border: 1px solid #ddd;
         }
         th, td {
-            padding: 10px;
+            padding: 12px 15px;
             text-align: left;
         }
         th {
+            background-color: #4a90e2;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        tr:hover {
             background-color: #f2f2f2;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .back-button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 20px;
+            display: inline-block;
+            text-decoration: none;
+        }
+        .back-button:hover {
+            background-color: #0056b3;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Child Records</h2>
+        <div class="fetching-message">Fetching records for: <?php echo htmlspecialchars($p_username); ?></div>
         <table>
             <tr>
                 <th>Name</th>
@@ -61,7 +112,7 @@ $result = $conn->query($sql);
                 <th>Weight</th>
                 <th>Height</th>
                 <th>Vaccine</th>
-                <th>Parent Username</th>
+                <th>Status</th>
             </tr>
             <?php
             if ($result->num_rows > 0) {
@@ -75,15 +126,17 @@ $result = $conn->query($sql);
                             <td>" . htmlspecialchars($row['c_weight']) . "</td>
                             <td>" . htmlspecialchars($row['c_height']) . "</td>
                             <td>" . htmlspecialchars($row['c_vaccine']) . "</td>
-                            <td>" . htmlspecialchars($row['p_username']) . "</td>
+                            <td>" . htmlspecialchars($row['status']) . "</td>
                           </tr>";
                 }
             } else {
                 echo "<tr><td colspan='9'>No records found</td></tr>";
             }
+            $stmt->close();
             $conn->close();
             ?>
         </table>
+        <a href="parent_dashboard.php" class="back-button">Back to Parent Dashboard</a>
     </div>
 </body>
 </html>

@@ -15,12 +15,14 @@ if (isset($_POST['Login'])) {
         $user = $result->fetch_assoc();
         if (password_verify($password, $user['password'])) {
             $_SESSION["user-id"] = $user["id"];
+            $_SESSION["username"] = $user["username"]; // Set the username in session
             $_SESSION["role"] = $user["role"];
             if ($user['role'] == 'admin') {
                 header("Location: admin_dashboard.php");
             } elseif ($user['role'] == 'parent') {
-                header("Location: parent_dashboard.php");
+                header("Location: ./parent/parent_dashboard.php");
             }
+            exit;
         } else {
             $error_message = "Invalid password";
         }
@@ -29,6 +31,7 @@ if (isset($_POST['Login'])) {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
