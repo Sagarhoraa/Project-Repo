@@ -35,8 +35,7 @@
         }
 
         .box:hover {
-            background-color: #e0f3ff;
-            border-color: #0056b3;
+         
             transform: translateY(-3px);
             box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
         }
@@ -55,8 +54,9 @@
         }
 
         .logout-button:hover {
-            background-color: #007bff;
-            color: #ffffff;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+            
             
         }
 

@@ -70,10 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         transition: all 0.3s ease-in-out;
     }
 
-    .form-container:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
-    }
+    
 
     h2 {
         text-align: center;
@@ -154,8 +151,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     .back-button:hover {
-        background-color: #007bff;
-        color: #ffffff;
+        
         transform: scale(1.05);
     }
 
@@ -192,8 +188,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <label for="c_city">City:</label>
             <input type="text" id="c_city" name="c_city" required>
 
-            <!-- <label for="c_birth">Birth Date:</label>
-            <input type="date" id="c_birth" name="c_birth" required> -->
+            <label for="c_birth">Birth Date:</label>
+            <input type="date" id="c_birth" name="c_birth" required>
 
             <label for="c_age">Age:</label>
             <input type="number" id="c_age" name="c_age" required>
