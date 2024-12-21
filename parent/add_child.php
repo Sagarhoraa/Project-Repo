@@ -26,8 +26,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $messages[] = "Cannot insert the record since we found duplicate entry.";
     } else {
         // Insert the child's data with status 'false' (pending approval)
-        $insert_query = "INSERT INTO child (c_name, c_gender, c_city, c_birth, c_age, c_weight, c_height, c_vaccine, p_username, p_email, status)
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'false')";
+        $insert_query = "INSERT INTO child (c_name, c_gender, c_city, c_birth, c_age, c_weight, c_height, c_vaccine, p_username, p_email)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($insert_query);
         $stmt->bind_param("ssssiiisss", $c_name, $c_gender, $c_city, $c_birth, $c_age, $c_weight, $c_height, $c_vaccine, $p_username, $p_email);
 

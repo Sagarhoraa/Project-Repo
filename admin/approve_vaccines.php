@@ -64,50 +64,68 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $c_vaccine = $child['c_vaccine'];
 
         if ($action === 'approve') {
-            $status = 'true';
-            $schedule_days = 0;
+            // Check vaccine stock
+            $stock_query = "SELECT quantity FROM vaccine_stock WHERE vaccine_name = ?";
+            $stmt_stock = $conn->prepare($stock_query);
+            $stmt_stock->bind_param("s", $c_vaccine);
+            $stmt_stock->execute();
+            $stock_result = $stmt_stock->get_result();
+            $stock = $stock_result->fetch_assoc();
 
-            // Determine the schedule based on the vaccine type
-            switch ($c_vaccine) {
-                case 'Hepatitis B':
-                    $schedule_days = 0; // Immediate scheduling
-                    break;
-                case 'BCG':
-                    $schedule_days = 7;
-                    break;
-                case 'Polio':
-                    $schedule_days = 9;
-                    break;
-                case 'DTP':
-                    $schedule_days = 15;
-                    break;
-            }
+            if ($stock['quantity'] > 0) {
+                $status = 'true';
+                $schedule_days = 0;
 
-            $scheduled_date = date('Y-m-d', strtotime("+$schedule_days days"));
-            $update_query = "UPDATE child SET status = ?, scheduled_date = ? WHERE id = ?";
-            $stmt_update = $conn->prepare($update_query);
-            $stmt_update->bind_param("ssi", $status, $scheduled_date, $child_id);
+                // Determine the schedule based on the vaccine type
+                switch ($c_vaccine) {
+                    case 'Hepatitis B':
+                        $schedule_days = 1; 
+                        break;
+                    case 'BCG':
+                        $schedule_days = 7;
+                        break;
+                    case 'Polio':
+                        $schedule_days = 9;
+                        break;
+                    case 'DTP':
+                        $schedule_days = 15;
+                        break;
+                }
 
-            if ($stmt_update->execute()) {
-                $subject = "Vaccination Request Approved for $c_name";
-                $body = "Your vaccination request for $c_name has been approved and is scheduled on $scheduled_date.";
-                sendEmailNotification($email, $subject, $body, $messages);
+                $scheduled_date = date('Y-m-d', strtotime("+$schedule_days days"));
+
+                // Update the child table
+                $update_query = "UPDATE child SET status = ?, scheduled_date = ? WHERE id = ?";
+                $stmt_update = $conn->prepare($update_query);
+                $stmt_update->bind_param("ssi", $status, $scheduled_date, $child_id);
+
+                if ($stmt_update->execute()) {
+                    // Update or insert into vaccine_dates table
+                    $vaccine_dates_query = "INSERT INTO vaccine_dates (c_name, p_username, name, v_date, timing) 
+                    VALUES (?, ?, ?, ?, ?) 
+                    ON DUPLICATE KEY UPDATE v_date = VALUES(v_date), timing = VALUES(timing)";
+                    $stmt_vaccine_dates = $conn->prepare($vaccine_dates_query);
+                    $timing = '09:00:00'; // Example timing, adjust as needed
+                    $stmt_vaccine_dates->bind_param("sssss", $c_name, $child['p_username'], $c_vaccine, $scheduled_date, $timing);
+
+                    if ($stmt_vaccine_dates->execute()) {
+                        // Reduce stock by 1
+                        $reduce_stock_query = "UPDATE vaccine_stock SET quantity = quantity - 1 WHERE vaccine_name = ?";
+                        $stmt_reduce_stock = $conn->prepare($reduce_stock_query);
+                        $stmt_reduce_stock->bind_param("s", $c_vaccine);
+                        $stmt_reduce_stock->execute();
+
+                        $subject = "Vaccination Request Approved for $c_name";
+                        $body = "Your vaccination request for $c_name has been approved and is scheduled on $scheduled_date.";
+                        sendEmailNotification($email, $subject, $body, $messages);
+                    } else {
+                        $messages[] = "Error updating vaccine dates: " . $stmt_vaccine_dates->error;
+                    }
+                } else {
+                    $messages[] = "Error updating request: " . $stmt_update->error;
+                }
             } else {
-                $messages[] = "Error updating request: " . $stmt_update->error;
-            }
-        } elseif ($action === 'reject') {
-            $status = 'false';
-
-            $update_query = "UPDATE child SET status = ? WHERE id = ?";
-            $stmt_update = $conn->prepare($update_query);
-            $stmt_update->bind_param("si", $status, $child_id);
-
-            if ($stmt_update->execute()) {
-                $subject = "Vaccination Request Rejected for $c_name";
-                $body = "We regret to inform you that your vaccination request for $c_name has been rejected.";
-                sendEmailNotification($email, $subject, $body, $messages);
-            } else {
-                $messages[] = "Error updating request: " . $stmt_update->error;
+                $messages[] = "Not sufficient stock for $c_vaccine.";
             }
         } elseif ($action === 'delete') {
             // Delete the record
@@ -121,6 +139,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 sendEmailNotification($email, $subject, $body, $messages);
             } else {
                 $messages[] = "Error deleting request: " . $stmt_delete->error;
+            }
+        } elseif ($action === 'reject') {
+            $status = 'rejected';
+            $update_query = "UPDATE child SET status = ? WHERE id = ?";
+            $stmt_update = $conn->prepare($update_query);
+            $stmt_update->bind_param("si", $status, $child_id);
+
+            if ($stmt_update->execute()) {
+                $subject = "Vaccination Request Rejected for $c_name";
+                $body = "We regret to inform you that your vaccination request for $c_name has been rejected.";
+                sendEmailNotification($email, $subject, $body, $messages);
+            } else {
+                $messages[] = "Error updating request to rejected: " . $stmt_update->error;
             }
         }
     } else {
@@ -201,11 +232,24 @@ $result = $conn->query($query);
             background-color: #f8d7da;
             color: #721c24;
         }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            text-align: center;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h2>Pending Vaccine Requests</h2>
+        <a href="admin_dashboard.php" class="back-link">Back to Admin Panel</a>
         <?php foreach ($messages as $message): ?>
             <div class="notification <?php echo strpos($message, 'Failed') !== false ? 'error' : 'success'; ?>">
                 <?php echo $message; ?>

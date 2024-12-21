@@ -1,4 +1,4 @@
-<?php
+<!-- <?php
 include('../db_connect.php');
 session_start();
 
@@ -135,4 +135,4 @@ $result = $conn->query($sql);
         <a href="admin_dashboard.php" class="back-button">Back to Dashboard</a>
     </div>
 </body>
-</html>
+</html> -->
