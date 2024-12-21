@@ -3,10 +3,10 @@ include('../db_connect.php');
 session_start();
 
 // Check if the user is logged in
-if (!isset($_SESSION['username'])) {
-    echo "You must be logged in to view this page.";
-    exit;
-}
+// if (!isset($_SESSION['username'])) {
+//     echo "You must be logged in to view this page.";
+//     exit;
+// }
 
 // Fetch approved vaccination schedule details from the database
 $p_username = $_SESSION['username'];
@@ -28,8 +28,10 @@ $result = $stmt->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Vaccination Schedule</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
             background-color: #f0f4f8;
             margin: 0;
             padding: 0;
@@ -38,15 +40,24 @@ $result = $stmt->get_result();
             align-items: center;
             min-height: 100vh;
         }
+
         .container {
             background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            padding: 40px;
             width: 90%;
             max-width: 800px;
             overflow-x: auto;
+            text-align: center;
         }
+
+        h2 {
+            color: #343a40;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
         .fetching-message {
             background-color: #e8f5e9;
             color: #2e7d32;
@@ -57,47 +68,53 @@ $result = $stmt->get_result();
             font-weight: bold;
             font-size: 1.2em;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
+
         table, th, td {
             border: 1px solid #ddd;
         }
+
         th, td {
             padding: 12px 15px;
             text-align: left;
         }
+
         th {
-            background-color: #4a90e2;
+            background-color: #007bff;
             color: white;
             font-weight: bold;
         }
+
         tr:nth-child(even) {
             background-color: #f8f9fa;
         }
+
         tr:hover {
-            background-color: #f2f2f2;
+            background-color: #f0f0f0;
         }
-        h2 {
-            color: #333;
-            margin-bottom: 20px;
-        }
+
         .back-button {
             background-color: #007bff;
             color: white;
             padding: 10px 15px;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
             text-align: center;
             margin-top: 20px;
             display: inline-block;
             text-decoration: none;
+            transition: background-color 0.3s, transform 0.3s;
         }
+
         .back-button:hover {
             background-color: #0056b3;
+            transform: translateY(-3px);
         }
     </style>
 </head>

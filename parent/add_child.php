@@ -50,91 +50,122 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Child</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 3px;
-            padding: 0;
-            display: grid;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            
-        }
-        .form-container {
-            background-color: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            width: 300px;
-            
-        }
-        h2 {
-            text-align: center;
-            margin: 3px 2px 5px 2px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        input[type="text"],
-        input[type="date"],
-        input[type="number"],
-        input[type="email"],
-        select {
-            width: 100%;
-            padding: 8px;
-            margin-bottom: 10px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            
-        }
-        input[type="submit"] {
-            width: 100%;
-            padding: 10px;
-            background-color: #28a745;
-            border: none;
-            border-radius: 4px;
-            color: #fff;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.35s ease-in-out, transform 0.35s ease-in-out;
-        }
-        input[type="submit"]:hover {
-            background-color: #218838;
-            transform: scale(1.04);
-        }
-        .notification {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #e8f5e9;
-            color: #2e7d32;
-            text-align: center;
-        }
-        .back-button {
-            display: block;
-            margin-top: 20px;
-            text-align: center;
-            background-color: #007bff;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            text-decoration: none;
-        }
-        .back-button:hover {
-            background-color: #0056b3;
-        }
-        /* Hide increment and decrement icons */
-        input[type=number]::-webkit-outer-spin-button,
-        input[type=number]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-    </style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f4f8; /* Matches the other page's background */
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+       
+    }
+
+    .form-container {
+        background-color: #ffffff;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+        width: 350px;
+        transform: translateY(0);
+        transition: all 0.3s ease-in-out;
+    }
+
+    .form-container:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    h2 {
+        text-align: center;
+        color: #4CAF50;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    input[type="number"],
+    input[type="email"],
+    select {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        box-sizing: border-box;
+        transition: border-color 0.3s ease-in-out;
+    }
+
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    input[type="number"]:focus,
+    input[type="email"]:focus,
+    select:focus {
+        border-color: #4CAF50;
+        outline: none;
+    }
+
+    input[type="submit"] {
+        width: 100%;
+        padding: 10px;
+        background-color: #4CAF50;
+        border: none;
+        border-radius: 8px;
+        color: #ffffff;
+        font-size: 16px;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+    }
+
+    input[type="submit"]:hover {
+        background-color: #388e3c;
+        transform: scale(1.05);
+    }
+
+    .notification {
+        margin-bottom: 20px;
+        padding: 10px;
+        border-radius: 8px;
+        background-color: #e8f5e9;
+        color: #2e7d32;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .back-button {
+        display: block;
+        text-align: center;
+        background-color: #ffffff;
+        color: #007bff;
+        padding: 10px;
+        border: 2px solid #007bff;
+        border-radius: 8px;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: bold;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .back-button:hover {
+        background-color: #007bff;
+        color: #ffffff;
+        transform: scale(1.05);
+    }
+
+    /* Hide increment and decrement icons */
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+</style>
 </head>
 <body>
     <div class="form-container">
