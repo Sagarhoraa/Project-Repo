@@ -53,23 +53,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
-            margin: 0;
+            margin: 3px;
             padding: 0;
             display: grid;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            
         }
         .form-container {
             background-color: #fff;
-            padding: 20px;
+            padding: 30px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             width: 300px;
+            
         }
         h2 {
             text-align: center;
-            margin-bottom: 20px;
+            margin: 3px 2px 5px 2px;
         }
         label {
             display: block;
@@ -86,6 +88,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             margin-bottom: 10px;
             border: 1px solid #ccc;
             border-radius: 4px;
+            box-sizing: border-box;
+            
         }
         input[type="submit"] {
             width: 100%;
@@ -124,6 +128,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         .back-button:hover {
             background-color: #0056b3;
         }
+        /* Hide increment and decrement icons */
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
     </style>
 </head>
 <body>
@@ -151,8 +161,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <label for="c_city">City:</label>
             <input type="text" id="c_city" name="c_city" required>
 
-            <label for="c_birth">Birth Date:</label>
-            <input type="date" id="c_birth" name="c_birth" required>
+            <!-- <label for="c_birth">Birth Date:</label>
+            <input type="date" id="c_birth" name="c_birth" required> -->
 
             <label for="c_age">Age:</label>
             <input type="number" id="c_age" name="c_age" required>

@@ -50,7 +50,8 @@ if (isset($_POST['Login'])) {
         <label for="password">Password</label>
         <input type="password" id="password" name="password" placeholder="Enter your password" required>
         <input type="submit" value="Login" id="Login" name="Login">
-        <a href="register.php">Register</a>
+        <a href="register.php" class="register" >Register</a>
+        <a href="forgot_password.php" class="register">Forgot Password?</a>
     </form>
     <script src="script.js"></script>
 </body>

@@ -51,7 +51,7 @@ form input {
     border-radius: 5px;
     border: 1px solid #ccc;
     font-size: 16px;
-    transition: border-color 0.5  s;
+    transition: border-color 0.3s;
 }
 
 form input:focus {
@@ -79,4 +79,62 @@ p {
     color: red;
     font-size: 16px;
     margin-top: 10px;
+}
+
+.register {
+    margin-top: 20px;
+    font-size: 16px;
+    background-color: #007BFF;
+    padding: 10px;
+    color: #fff;
+    border-radius: 5px;
+    transition: background-color 0.3s, transform 0.3s;
+    gap: 5px;   
+}
+
+.register a {
+    color: #fff;
+    text-decoration: none;
+}
+
+.register:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.notification {
+    padding: 10px;
+    margin-top: 20px;
+    border-radius: 5px;
+    text-align: center;
+}
+
+.notification.success {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.notification.error {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.back-link {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    color: #007bff;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.back-link:hover {
+    color: #0056b3;
+}
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
 }

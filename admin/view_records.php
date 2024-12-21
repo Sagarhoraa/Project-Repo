@@ -28,7 +28,7 @@ $result = $conn->query($sql);
     <title>View Child Records</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f0f4f8;
             margin: 0;
             padding: 0;
@@ -39,15 +39,22 @@ $result = $conn->query($sql);
         }
         .container {
             background-color: #ffffff;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            width: 80%;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            width: 90%;
             max-width: 800px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 30px;
+            color: #007bff;
+            font-size: 2rem;
         }
         table {
             width: 100%;
             border-collapse: collapse;
+            margin-bottom: 20px;
         }
         table, th, td {
             border: 1px solid #ccc;
@@ -57,7 +64,8 @@ $result = $conn->query($sql);
             text-align: left;
         }
         th {
-            background-color: #f2f2f2;
+            background-color: #e9ecef;
+            color: #007bff;
         }
         .message {
             margin-top: 20px;
@@ -76,17 +84,36 @@ $result = $conn->query($sql);
         .dashboard-button {
             display: inline-block;
             margin-top: 20px;
-            padding: 10px 20px;
+            padding: 15px 30px;
             background-color: #007bff;
             color: #ffffff;
             text-align: center;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
             transition: background-color 0.3s, transform 0.3s;
         }
-        .dashboard-button:hover {
-            background-color: #0056b3;
+        
+        .delete-button {
+            color: #ffffff;
+            background-color: #dc3545;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .delete-button:hover {
+            background-color: #c82333;
             transform: translateY(-2px);
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        a:hover {
+            color: #0056b3;
         }
     </style>
 </head>
@@ -119,7 +146,7 @@ $result = $conn->query($sql);
                             <td>" . htmlspecialchars($row['c_height']) . "</td>
                             <td>" . htmlspecialchars($row['c_vaccine']) . "</td>
                             <td>" . htmlspecialchars($row['p_username']) . "</td>
-                            <td><a href='?delete_id=" . $row['id'] . "' onclick=\"return confirm('Are you sure you want to delete this record?');\">Delete</a></td>
+                            <td><a href='?delete_id=" . $row['id'] . "' class='delete-button' onclick=\"return confirm('Are you sure you want to delete this record?');\">Delete</a></td>
                           </tr>";
                 }
             } else {
