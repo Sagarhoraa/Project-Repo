@@ -25,8 +25,7 @@ $result = $stmt->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Child Record</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
+       
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f0f4f8;
