@@ -11,7 +11,7 @@ include('../db_connect.php');
     <title>Admin Dashboard</title>
     <style>
       body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        font-family:  sans-serif;
         background: linear-gradient(135deg, #e9ecef, #f8f9fa);
         margin: 0;
         padding: 0;

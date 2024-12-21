@@ -20,7 +20,7 @@
             width: 200px;
             height: 100px;
             margin: 20px;
-            border: 2px solid #007bff;
+            border: 2px solid #000;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -44,8 +44,8 @@
             margin-top: 20px;
             padding: 10px 20px;
             background-color: #ffffff;
-            color: #007bff;
-            border: 2px solid #007bff;
+            color: #000;
+            border: 2px solid #000;
             font-size: 16px;
             cursor: pointer;
             font-weight: bold;
@@ -59,12 +59,21 @@
             
             
         }
-
         .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #ffffff;
+    padding: 30px 50px;
+    border-radius: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    margin: 20px;
+    text-align: center;
+}
+
+
 
         .box-container {
             display: flex;

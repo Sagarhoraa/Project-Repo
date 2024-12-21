@@ -85,7 +85,7 @@ $result = $stmt->get_result();
         }
 
         th {
-            background-color: #007bff;
+            background-color:rgb(0, 166, 255);
             color: white;
             font-weight: bold;
         }

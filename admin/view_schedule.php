@@ -15,7 +15,7 @@ $result = $conn->query($sql);
     <title>View Vaccine Schedule</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: sans-serif;
             background-color: #f0f4f8;
             margin: 0;
             padding: 0;

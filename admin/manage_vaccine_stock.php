@@ -57,7 +57,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <title>Manage Vaccine Stock</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family:  sans-serif;
             background-color: #f4f4f4;
             margin: 0;
             padding: 0;
